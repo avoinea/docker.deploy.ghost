@@ -14,4 +14,4 @@
 
 ## Start blogging
 
-* http://myblog.com1
+* http://myblog.com
