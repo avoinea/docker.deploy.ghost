@@ -1,0 +1,31 @@
+version: "2"
+services:
+  ghost:
+    image: ghost:1.12.1
+    restart: unless-stopped
+    ports:
+    - 80:2368
+    environment:
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: ${DB_USER}
+      database__connection__password: ${DB_PASS}
+      database__connection__database: ${DB_NAME}
+    volumes:
+    - ghost:/var/lib/ghost/content
+  db:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    volumes:
+    - db:/var/lib/mysql
+
+volumes:
+  ghost:
+    driver: local
+  db:
+    driver: local
