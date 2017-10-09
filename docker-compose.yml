@@ -11,6 +11,8 @@ services:
       database__connection__user: ${DB_USER}
       database__connection__password: ${DB_PASS}
       database__connection__database: ${DB_NAME}
+      NODE_ENV: ${NODE}
+      url: ${URL}
     volumes:
     - ghost:/var/lib/ghost/content
   db:
