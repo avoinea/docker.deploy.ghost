@@ -1,4 +1,4 @@
-# Ghost Blog Docker Orchestration
+# Ghost Blogging Platform Docker Orchestration
 
 ## Install
 
