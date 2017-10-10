@@ -13,7 +13,7 @@ services:
         <VirtualHost *:80>
           ServerName ${URL}
           RewriteEngine On
-          RewriteRule ^(.*)$$ https://${URL} [R=permanent,L]
+          RewriteRule ^(.*)$$ https://${URL}$$1 [R=permanent,L]
         </VirtualHost>
         <VirtualHost *:443>
               ServerName ${URL}
