@@ -32,4 +32,4 @@
 
 ## Start blogging
 
-* https://www.myblog.com
+* https://www.avoinea.com
