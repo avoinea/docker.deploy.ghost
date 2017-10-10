@@ -1,24 +1,63 @@
 version: "2"
 services:
+  apache:
+    image: eeacms/apache:2.4-2.1-alpine
+    restart: unless-stopped
+    ports:
+    - "80:80"
+    - "443:443"
+    environment:
+      TZ: "${TZ}"
+      APACHE_MODULES: "http2_module"
+      APACHE_CONFIG: |-
+        <VirtualHost *:80>
+          ServerName ${URL}
+          RewriteEngine On
+          RewriteRule ^(.*)$$ https://${URL} [R=permanent,L]
+        </VirtualHost>
+        <VirtualHost *:443>
+              ServerName ${URL}
+              Protocols h2 http/1.1
+              H2ModernTLSOnly off
+              ProxyRequests Off
+              SSLEngine on
+              SSLProtocol ALL -SSLv2 -SSLv3
+              SSLCipherSuite ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+              SSLHonorCipherOrder on
+              SSLCertificateFile /etc/apache/certs/live/${URL}/cert.pem
+              SSLCertificateKeyFile /etc/apache/certs/live/${URL}/privkey.pem
+              SSLCertificateChainFile /etc/apache/certs/live/${URL}/fullchain.pem
+
+              ProxyRequests off
+              RewriteEngine On
+              RequestHeader set Host "%{HTTP_HOST}s"
+              RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
+              RequestHeader set X-Forwarded-For "%{X-Forwarded-For}s"
+              RequestHeader set X-Forwarded-Proto https
+              RequestHeader set X-Frame-Options SAMEORIGIN
+              RewriteRule ^(.*)$$ http://ghost:2368$$1 [P]
+          </VirtualHost>
+    volumes:
+    - certs:/etc/apache/certs:ro
   ghost:
     image: ghost:1.12.1
     restart: unless-stopped
-    ports:
-    - 80:2368
     environment:
+      TZ: "${TZ}"
       database__client: mysql
       database__connection__host: db
       database__connection__user: ${DB_USER}
       database__connection__password: ${DB_PASS}
       database__connection__database: ${DB_NAME}
       NODE_ENV: ${NODE}
-      url: ${URL}
+      url: https://${URL}
     volumes:
     - ghost:/var/lib/ghost/content
   db:
     image: mysql:5.7
     restart: unless-stopped
     environment:
+      TZ: "${TZ}"
       MYSQL_RANDOM_ROOT_PASSWORD: "true"
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
@@ -31,3 +70,5 @@ volumes:
     driver: local
   db:
     driver: local
+  certs:
+    external: true
