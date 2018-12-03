@@ -32,4 +32,22 @@
 
 ## Start blogging
 
-* https://www.avoinea.com
+    https://www.myblog.com/ghost
+
+## Renew SSL certificates
+
+### First run:
+
+      $ docker-compose stop
+      $ docker run --name=letsentrypt \
+                   -p 80:80 \
+                   -p 443:443 \
+                   -v certs:/etc/letsencrypt \
+               certbot/certbot renew
+      $ docker-compose up -d
+
+### Next run:
+
+      $ docker-compose stop
+      $ docker start letsencrypt
+      $ docker-compose up -d
