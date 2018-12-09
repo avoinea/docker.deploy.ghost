@@ -1,5 +1,7 @@
 # Ghost Blogging Platform Docker Orchestration
 
+[Ghost](https://ghost.org/) - The professional publishing platform
+
 ## Install
 
     $ git clone https://github.com/avoinea/docker.deploy.ghost myblog.com
